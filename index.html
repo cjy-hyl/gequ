@@ -17,19 +17,12 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 20px;
-        }
-        .container {
-            width: 100%;
-            max-width: 1200px;
-            display: flex;
-            flex-wrap: wrap;
             justify-content: center;
-            gap: 40px;
-            align-items: center;
+            padding: 20px;
         }
         .wheel-container {
             position: relative;
+            margin-bottom: 50px;
         }
         .wheel {
             width: 500px;
@@ -41,7 +34,8 @@
                 #ff6b6b, #4ecdc4, #45b7d1, #96ceb4, #ffeaa7
             );
             position: relative;
-            transition: transform 5s cubic-bezier(0.17, 0.67, 0.13, 0.99);
+            /* 动画时间调整为1.5秒，保持流畅缓动 */
+            transition: transform 1.5s cubic-bezier(0.17, 0.67, 0.13, 0.99);
             box-shadow: 0 0 30px rgba(0,0,0,0.3);
             border: 10px solid #fff;
         }
@@ -80,14 +74,25 @@
             height: 10px;
             background: #ff3d00;
         }
+        .result {
+            margin: 30px 0;
+            font-size: 28px;
+            font-weight: 600;
+            color: #fff;
+            background: rgba(0,0,0,0.3);
+            padding: 20px 40px;
+            border-radius: 50px;
+            text-align: center;
+            min-width: 350px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
         .controls {
             display: flex;
-            gap: 20px;
-            margin-top: 30px;
+            gap: 30px;
         }
         .btn {
-            padding: 12px 30px;
-            font-size: 18px;
+            padding: 15px 40px;
+            font-size: 20px;
             font-weight: 600;
             border: none;
             border-radius: 50px;
@@ -119,82 +124,56 @@
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(46,204,113,0.3);
         }
-        .song-list {
-            background: rgba(255,255,255,0.9);
-            border-radius: 20px;
-            padding: 25px;
-            width: 100%;
-            max-width: 500px;
-            max-height: 600px;
-            overflow-y: auto;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-        }
-        .song-list h2 {
-            text-align: center;
-            color: #333;
-            margin-bottom: 20px;
-            font-size: 24px;
-            border-bottom: 2px solid #eee;
-            padding-bottom: 10px;
-        }
-        .song-items {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-        }
-        .song-item {
-            padding: 8px 12px;
-            background: #f8f9fa;
-            border-radius: 8px;
-            font-size: 14px;
-            color: #555;
-            transition: all 0.2s ease;
-            border-left: 3px solid #667eea;
-        }
-        .song-item.removed {
-            background: #ffebee;
-            color: #e53935;
-            text-decoration: line-through;
-            border-left-color: #e53935;
-        }
-        .result {
-            margin-top: 20px;
-            font-size: 22px;
-            color: #fff;
-            background: rgba(0,0,0,0.3);
-            padding: 15px 30px;
-            border-radius: 50px;
-            text-align: center;
-            min-width: 300px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-        }
-        @media (max-width: 992px) {
-            .wheel {
-                width: 400px;
-                height: 400px;
-            }
-        }
+        /* 响应式调整 */
         @media (max-width: 768px) {
             .wheel {
-                width: 300px;
-                height: 300px;
+                width: 320px;
+                height: 320px;
+                border-width: 8px;
             }
-            .song-items {
-                grid-template-columns: 1fr;
+            .pointer {
+                border-left: 25px solid transparent;
+                border-right: 25px solid transparent;
+                border-bottom: 50px solid #ff3d00;
+            }
+            .result {
+                font-size: 22px;
+                padding: 15px 30px;
+                min-width: 280px;
+            }
+            .btn {
+                padding: 12px 30px;
+                font-size: 18px;
+            }
+            .controls {
+                gap: 20px;
+            }
+        }
+        @media (max-width: 480px) {
+            .wheel {
+                width: 280px;
+                height: 280px;
+            }
+            .result {
+                font-size: 20px;
+                padding: 12px 25px;
+                min-width: 250px;
+            }
+            .controls {
+                flex-direction: column;
+                width: 100%;
+                max-width: 280px;
+            }
+            .btn {
+                width: 100%;
             }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="wheel-container">
-            <div class="pointer"></div>
-            <div class="wheel" id="wheel"></div>
-        </div>
-        <div class="song-list">
-            <h2>歌曲列表</h2>
-            <div class="song-items" id="songItems"></div>
-        </div>
+    <div class="wheel-container">
+        <div class="pointer"></div>
+        <div class="wheel" id="wheel"></div>
     </div>
     <div class="result" id="result">点击转盘开始抽取歌曲</div>
     <div class="controls">
@@ -203,7 +182,7 @@
     </div>
 
     <script>
-        // 初始歌曲列表（完整105首）
+        // 完整歌曲列表（105首）
         const initialSongs = [
             "嘉宾", "座位", "父亲", "老男孩", "吻得太逼真", "天下", "不甘", "晚夜微雨问海棠",
             "千秋迭梦", "我有一个道姑朋友", "问风", "野心家", "爱不得忘不舍", "拍拍宇宙", "起风了",
@@ -227,23 +206,8 @@
         const spinBtn = document.getElementById('spinBtn');
         const resetBtn = document.getElementById('resetBtn');
         const result = document.getElementById('result');
-        const songItems = document.getElementById('songItems');
 
-        // 渲染歌曲列表
-        function renderSongList() {
-            songItems.innerHTML = '';
-            currentSongs.forEach((song, index) => {
-                const songItem = document.createElement('div');
-                songItem.className = 'song-item';
-                songItem.textContent = `${index + 1}. ${song}`;
-                songItems.appendChild(songItem);
-            });
-        }
-
-        // 初始化
-        renderSongList();
-
-        // 抽取歌曲（优化随机逻辑：先随机选歌曲，再匹配轮盘角度，确保完全随机）
+        // 抽取歌曲（速度调整为1.5秒）
         spinBtn.addEventListener('click', () => {
             if (currentSongs.length === 0) {
                 result.textContent = '所有歌曲已抽取完毕！';
@@ -253,27 +217,22 @@
             spinBtn.disabled = true;
             result.textContent = '抽取中...';
 
-            // 第一步：纯随机选中歌曲（核心优化：直接从数组随机取索引，确保完全随机）
+            // 保持完全随机逻辑，选中歌曲
             const selectedIndex = Math.floor(Math.random() * currentSongs.length);
             const selectedSong = currentSongs[selectedIndex];
 
-            // 第二步：根据选中的歌曲计算对应的轮盘旋转角度（让轮盘精准停在该歌曲区域）
+            // 调整基础旋转圈数为3-6圈，确保1.5秒内有足够旋转视觉效果
             const segmentAngle = 360 / currentSongs.length;
-            // 基础旋转5-10圈，再加上目标歌曲对应的角度（偏移15度让指针对准区域中心）
-            const baseRotation = Math.floor(Math.random() * 3600) + 1800;
+            const baseRotation = Math.floor(Math.random() * 1080) + 1080; // 3-6圈（1080-2160度）
             const targetAngle = baseRotation + (selectedIndex * segmentAngle) + 15;
             wheel.style.transform = `rotate(${targetAngle}deg)`;
 
-            // 第三步：旋转结束后更新状态
+            // 定时器与动画时间同步（1.5秒）
             setTimeout(() => {
-                // 显示结果
                 result.textContent = `抽中歌曲：${selectedSong}`;
-                // 移除选中的歌曲
-                currentSongs.splice(selectedIndex, 1);
-                // 更新歌曲列表
-                renderSongList();
+                currentSongs.splice(selectedIndex, 1); // 移除已抽歌曲
                 spinBtn.disabled = false;
-            }, 5000); // 与转盘动画时间一致
+            }, 1500);
         });
 
         // 重置功能
@@ -281,7 +240,6 @@
             currentSongs = [...initialSongs];
             wheel.style.transform = 'rotate(0deg)';
             result.textContent = '点击转盘开始抽取歌曲';
-            renderSongList();
         });
     </script>
 </body>
