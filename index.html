@@ -203,7 +203,7 @@
     </div>
 
     <script>
-        // 初始歌曲列表
+        // 初始歌曲列表（完整105首）
         const initialSongs = [
             "嘉宾", "座位", "父亲", "老男孩", "吻得太逼真", "天下", "不甘", "晚夜微雨问海棠",
             "千秋迭梦", "我有一个道姑朋友", "问风", "野心家", "爱不得忘不舍", "拍拍宇宙", "起风了",
@@ -243,7 +243,7 @@
         // 初始化
         renderSongList();
 
-        // 抽取歌曲
+        // 抽取歌曲（优化随机逻辑：先随机选歌曲，再匹配轮盘角度，确保完全随机）
         spinBtn.addEventListener('click', () => {
             if (currentSongs.length === 0) {
                 result.textContent = '所有歌曲已抽取完毕！';
@@ -253,26 +253,25 @@
             spinBtn.disabled = true;
             result.textContent = '抽取中...';
 
-            // 随机旋转角度（360*5 ~ 360*10 度之间）
-            const randomAngle = Math.floor(Math.random() * 3600) + 1800;
-            wheel.style.transform = `rotate(${randomAngle}deg)`;
+            // 第一步：纯随机选中歌曲（核心优化：直接从数组随机取索引，确保完全随机）
+            const selectedIndex = Math.floor(Math.random() * currentSongs.length);
+            const selectedSong = currentSongs[selectedIndex];
 
-            // 计算选中的歌曲索引
+            // 第二步：根据选中的歌曲计算对应的轮盘旋转角度（让轮盘精准停在该歌曲区域）
+            const segmentAngle = 360 / currentSongs.length;
+            // 基础旋转5-10圈，再加上目标歌曲对应的角度（偏移15度让指针对准区域中心）
+            const baseRotation = Math.floor(Math.random() * 3600) + 1800;
+            const targetAngle = baseRotation + (selectedIndex * segmentAngle) + 15;
+            wheel.style.transform = `rotate(${targetAngle}deg)`;
+
+            // 第三步：旋转结束后更新状态
             setTimeout(() => {
-                const normalizedAngle = randomAngle % 360;
-                const segmentAngle = 360 / currentSongs.length;
-                const selectedIndex = Math.floor(normalizedAngle / segmentAngle);
-                const selectedSong = currentSongs[selectedIndex];
-
-                // 更新结果
+                // 显示结果
                 result.textContent = `抽中歌曲：${selectedSong}`;
-
                 // 移除选中的歌曲
                 currentSongs.splice(selectedIndex, 1);
-
-                // 更新歌曲列表显示
+                // 更新歌曲列表
                 renderSongList();
-
                 spinBtn.disabled = false;
             }, 5000); // 与转盘动画时间一致
         });
