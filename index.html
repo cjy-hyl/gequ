@@ -34,7 +34,7 @@
                 #ff6b6b, #4ecdc4, #45b7d1, #96ceb4, #ffeaa7
             );
             position: relative;
-            /* 动画时间调整为1.5秒，保持流畅缓动 */
+            /* 1.5秒快速动画，保持流畅缓动 */
             transition: transform 1.5s cubic-bezier(0.17, 0.67, 0.13, 0.99);
             box-shadow: 0 0 30px rgba(0,0,0,0.3);
             border: 10px solid #fff;
@@ -182,7 +182,7 @@
     </div>
 
     <script>
-        // 完整歌曲列表（105首）
+        // 更新后的完整曲库（116首，新增106-116首歌曲）
         const initialSongs = [
             "嘉宾", "座位", "父亲", "老男孩", "吻得太逼真", "天下", "不甘", "晚夜微雨问海棠",
             "千秋迭梦", "我有一个道姑朋友", "问风", "野心家", "爱不得忘不舍", "拍拍宇宙", "起风了",
@@ -198,7 +198,8 @@
             "大家一起喜羊羊", "我还有点小糊涂", "素颜", "爱", "倒数", "世界美好与你环环相扣",
             "执迷不悟", "你的答案", "牵丝戏", "解药", "那些年", "江南", "38°6", "十年人间",
             "奔跑", "日不落", "多幸运", "龙的传人", "预谋", "火力全开", "最后的旅行", "是风动",
-            "后来我们的爱", "极恶都市"
+            "后来我们的爱", "极恶都市", "锦鲤抄", "我的未来式", "三国恋", "超级英雄", "九张机",
+            "开门见山", "真英雄", "壁上观", "对你爱不完", "满目星辰皆是你", "只为你着迷"
         ];
 
         let currentSongs = [...initialSongs];
@@ -207,7 +208,7 @@
         const resetBtn = document.getElementById('resetBtn');
         const result = document.getElementById('result');
 
-        // 抽取歌曲（速度调整为1.5秒）
+        // 抽取歌曲（1.5秒快速抽取，保持完全随机逻辑）
         spinBtn.addEventListener('click', () => {
             if (currentSongs.length === 0) {
                 result.textContent = '所有歌曲已抽取完毕！';
@@ -217,25 +218,25 @@
             spinBtn.disabled = true;
             result.textContent = '抽取中...';
 
-            // 保持完全随机逻辑，选中歌曲
+            // 纯随机选中歌曲，每首概率均等
             const selectedIndex = Math.floor(Math.random() * currentSongs.length);
             const selectedSong = currentSongs[selectedIndex];
 
-            // 调整基础旋转圈数为3-6圈，确保1.5秒内有足够旋转视觉效果
+            // 优化旋转圈数（3-6圈），确保1.5秒内视觉效果饱满
             const segmentAngle = 360 / currentSongs.length;
             const baseRotation = Math.floor(Math.random() * 1080) + 1080; // 3-6圈（1080-2160度）
             const targetAngle = baseRotation + (selectedIndex * segmentAngle) + 15;
             wheel.style.transform = `rotate(${targetAngle}deg)`;
 
-            // 定时器与动画时间同步（1.5秒）
+            // 定时器与1.5秒动画时间同步，精准显示结果
             setTimeout(() => {
                 result.textContent = `抽中歌曲：${selectedSong}`;
-                currentSongs.splice(selectedIndex, 1); // 移除已抽歌曲
+                currentSongs.splice(selectedIndex, 1); // 移除已抽歌曲，避免重复
                 spinBtn.disabled = false;
             }, 1500);
         });
 
-        // 重置功能
+        // 重置功能：恢复完整曲库，重置转盘和提示文字
         resetBtn.addEventListener('click', () => {
             currentSongs = [...initialSongs];
             wheel.style.transform = 'rotate(0deg)';
